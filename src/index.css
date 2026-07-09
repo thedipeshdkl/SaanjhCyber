@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --lattice-wood: #7E4A2E;
+    --prayer-crimson: #9B1B30;
+    --thamel-gray: #414345;
+    --pashmina-white: #F4F1EA;
+    --prayer-gold: #D4AF37;
+    --success: #2E7D32;
+    --warning: #E65100;
+    --info: #1565C0;
+
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 348 70% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 30% 92%;
+    --secondary-foreground: 0 0% 15%;
+    --muted: 30 15% 90%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 30 15% 90%;
+    --accent-foreground: 0 0% 15%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 15% 85%;
+    --input: 30 15% 85%;
+    --ring: 348 70% 35%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply antialiased;
+    background-color: var(--pashmina-white);
+    color: var(--thamel-gray);
+    font-family: "Inter Variable", "Inter", sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Playfair Display Variable", "Playfair Display", serif;
+    color: var(--lattice-wood);
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: "Playfair Display Variable", "Playfair Display", serif;
+  }
+
+  .font-mono-code {
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .font-body {
+    font-family: "Inter Variable", "Inter", sans-serif;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-all duration-200;
+    background-color: var(--prayer-crimson);
+    color: var(--prayer-gold);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 10px 30px rgba(62, 39, 35, 0.2);
+  }
+  .btn-primary:active {
+    transform: scale(0.95);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-white border-2 rounded-lg font-semibold transition-all duration-200;
+    border-color: var(--lattice-wood);
+    color: var(--lattice-wood);
+  }
+  .btn-secondary:hover {
+    background-color: var(--lattice-wood);
+    color: white;
+  }
+  .btn-secondary:active {
+    transform: scale(0.95);
+  }
+
+  .card {
+    @apply bg-white rounded-lg transition-all duration-200;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+  }
+  .card:hover {
+    box-shadow: 0 10px 30px rgba(62, 39, 35, 0.1);
+  }
+
+  .badge-risk-critical {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800;
+  }
+
+  .badge-risk-high {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800;
+  }
+
+  .badge-risk-medium {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-risk-low {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize;
+  }
+
+  .section-header {
+    @apply text-3xl md:text-4xl font-semibold mb-4;
+    font-family: "Playfair Display Variable", "Playfair Display", serif;
+    color: var(--lattice-wood);
+  }
+
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-md rounded-lg border border-white/20;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-200 rounded-lg transition-all;
+  }
+  .input-field:focus {
+    @apply outline-none;
+    box-shadow: 0 0 0 2px var(--prayer-crimson);
+    border-color: transparent;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--pashmina-white);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--lattice-wood);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--prayer-crimson);
+}

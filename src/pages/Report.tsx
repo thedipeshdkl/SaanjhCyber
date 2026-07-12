@@ -8,6 +8,7 @@ import {
   Globe, Facebook, MessageCircle, Wallet, CreditCard, Building, Hash, Mail, EyeOff
 } from "lucide-react";
 import { trpc } from "@/providers/trpc";
+import LocationDetector, { type DetectedLocation } from "@/components/LocationDetector";
 
 type ReportFormData = {
   title: string;
@@ -24,6 +25,8 @@ type ReportFormData = {
   victimType: string;
   privacyLevel: string;
   isDefamationAcknowledged: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 const categories = [
@@ -118,6 +121,8 @@ export default function Report() {
   const [identifiers, setIdentifiers] = useState<{type: string; value: string}[]>([]);
   const [identifierType, setIdentifierType] = useState("phone");
   const [identifierValue, setIdentifierValue] = useState("");
+  const [locationMode, setLocationMode] = useState<"manual" | "detect">("manual");
+  const [detectedLocation, setDetectedLocation] = useState<DetectedLocation | null>(null);
 
   function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -189,16 +194,55 @@ export default function Report() {
     setValue("municipality", "");
     setSelectedDistricts(districts[province] || []);
     setSelectedMunicipalities([]);
+    // Clear coordinates if user manually overrides after detection
+    if (detectedLocation) {
+      setValue("latitude", null);
+      setValue("longitude", null);
+      setDetectedLocation(null);
+    }
   };
 
   const handleDistrictChange = (district: string) => {
     setValue("district", district);
     setValue("municipality", "");
     setSelectedMunicipalities(municipalities[district] || []);
+    // Clear coordinates if user manually overrides after detection
+    if (detectedLocation) {
+      setValue("latitude", null);
+      setValue("longitude", null);
+      setDetectedLocation(null);
+    }
+  };
+
+  const handleLocationDetected = (result: DetectedLocation) => {
+    setDetectedLocation(result);
+    setValue("province", result.province);
+    setValue("district", result.district);
+    if (result.municipality) setValue("municipality", result.municipality);
+    setValue("latitude", result.latitude);
+    setValue("longitude", result.longitude);
+    // Update cascading dropdown states so switching to manual shows correct options
+    setSelectedDistricts(districts[result.province] || []);
+    setSelectedMunicipalities(municipalities[result.district] || []);
+  };
+
+  const handleModeChange = (mode: "manual" | "detect") => {
+    setLocationMode(mode);
+  };
+
+  const handleClearCoordinates = () => {
+    setDetectedLocation(null);
+    setValue("latitude", null);
+    setValue("longitude", null);
   };
 
   const onSubmit = (data: ReportFormData) => {
-    createReport.mutate({ ...data, identifiers } as any);
+    createReport.mutate({
+      ...data,
+      identifiers,
+      latitude: data.latitude ?? null,
+      longitude: data.longitude ?? null,
+    } as any);
   };
 
   const steps = [
@@ -503,57 +547,102 @@ export default function Report() {
                     Incident Location
                   </h3>
 
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--lattice-wood)] mb-1">
-                      Province *
-                    </label>
-                    <select
-                      {...register("province")}
-                      onChange={(e) => handleProvinceChange(e.target.value)}
-                      className="input-field"
-                    >
-                      <option value="">Select Province</option>
-                      {provinces.map((p) => (
-                        <option key={p} value={p}>{p}</option>
-                      ))}
-                    </select>
-                    {errors.province && <p className="text-red-500 text-sm mt-1">{errors.province.message}</p>}
-                  </div>
+                  {/* Location Mode Toggle + Detector */}
+                  <LocationDetector
+                    onLocationDetected={handleLocationDetected}
+                    onModeChange={handleModeChange}
+                    onClearCoordinates={handleClearCoordinates}
+                    currentMode={locationMode}
+                    detectedLocation={detectedLocation}
+                  />
 
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--lattice-wood)] mb-1">
-                      District *
-                    </label>
-                    <select
-                      {...register("district")}
-                      onChange={(e) => handleDistrictChange(e.target.value)}
-                      className="input-field"
-                      disabled={!watchProvince}
-                    >
-                      <option value="">Select District</option>
-                      {selectedDistricts.map((d) => (
-                        <option key={d} value={d}>{d}</option>
-                      ))}
-                    </select>
-                    {errors.district && <p className="text-red-500 text-sm mt-1">{errors.district.message}</p>}
-                  </div>
+                  {/* Municipality fallback when detection returns partial result (no municipality) */}
+                  {locationMode === "detect" && detectedLocation && !detectedLocation.municipality && (
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-[var(--lattice-wood)] mb-1">
+                        Municipality * <span className="text-amber-600 text-xs">(could not be auto-detected)</span>
+                      </label>
+                      <select
+                        {...register("municipality")}
+                        className="input-field"
+                      >
+                        <option value="">Select Municipality</option>
+                        {(municipalities[detectedLocation.district] || []).map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                      {!watch("municipality") && (
+                        <p className="text-amber-600 text-sm mt-1">Municipality must be selected manually</p>
+                      )}
+                      {errors.municipality && <p className="text-red-500 text-sm mt-1">{errors.municipality.message}</p>}
+                    </div>
+                  )}
 
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--lattice-wood)] mb-1">
-                      Municipality *
-                    </label>
-                    <select
-                      {...register("municipality")}
-                      className="input-field"
-                      disabled={!watchDistrict}
-                    >
-                      <option value="">Select Municipality</option>
-                      {selectedMunicipalities.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
-                    {errors.municipality && <p className="text-red-500 text-sm mt-1">{errors.municipality.message}</p>}
-                  </div>
+                  {/* Manual Selection Dropdowns — shown only in manual mode */}
+                  {locationMode === "manual" && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--lattice-wood)] mb-1">
+                          Province *
+                        </label>
+                        <select
+                          {...register("province")}
+                          onChange={(e) => handleProvinceChange(e.target.value)}
+                          className="input-field"
+                        >
+                          <option value="">Select Province</option>
+                          {provinces.map((p) => (
+                            <option key={p} value={p}>{p}</option>
+                          ))}
+                        </select>
+                        {errors.province && <p className="text-red-500 text-sm mt-1">{errors.province.message}</p>}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--lattice-wood)] mb-1">
+                          District *
+                        </label>
+                        <select
+                          {...register("district")}
+                          onChange={(e) => handleDistrictChange(e.target.value)}
+                          className="input-field"
+                          disabled={!watchProvince}
+                        >
+                          <option value="">Select District</option>
+                          {selectedDistricts.map((d) => (
+                            <option key={d} value={d}>{d}</option>
+                          ))}
+                        </select>
+                        {errors.district && <p className="text-red-500 text-sm mt-1">{errors.district.message}</p>}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--lattice-wood)] mb-1">
+                          Municipality *
+                        </label>
+                        <select
+                          {...register("municipality")}
+                          onChange={(e) => {
+                            setValue("municipality", e.target.value);
+                            // Clear coordinates if user manually overrides after detection
+                            if (detectedLocation) {
+                              setValue("latitude", null);
+                              setValue("longitude", null);
+                              setDetectedLocation(null);
+                            }
+                          }}
+                          className="input-field"
+                          disabled={!watchDistrict}
+                        >
+                          <option value="">Select Municipality</option>
+                          {selectedMunicipalities.map((m) => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </select>
+                        {errors.municipality && <p className="text-red-500 text-sm mt-1">{errors.municipality.message}</p>}
+                      </div>
+                    </>
+                  )}
 
                   <div>
                     <label className="block text-sm font-medium text-[var(--lattice-wood)] mb-1">

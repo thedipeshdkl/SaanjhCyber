@@ -12,6 +12,7 @@ import { articleRouter } from "./article-router";
 import { chatRouter } from "./chat-router";
 import { messageRouter } from "./message-router";
 import { watchlistRouter } from "./watchlist-router";
+import { locationRouter } from "./location-router";
 import { createRouter, publicQuery } from "./middleware";
 
 export const appRouter = createRouter({
@@ -30,6 +31,7 @@ export const appRouter = createRouter({
   chat: chatRouter,
   message: messageRouter,
   watchlist: watchlistRouter,
+  location: locationRouter,
 });
 
 export type AppRouter = typeof appRouter;

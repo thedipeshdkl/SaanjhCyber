@@ -53,6 +53,8 @@ export const reports = mysqlTable("reports", {
   district: varchar("district", { length: 100 }).notNull(),
   municipality: varchar("municipality", { length: 100 }).notNull(),
   location: varchar("location", { length: 200 }),
+  latitude: decimal("latitude", { precision: 10, scale: 7 }),
+  longitude: decimal("longitude", { precision: 10, scale: 7 }),
   amountLost: decimal("amountLost", { precision: 15, scale: 2 }),
   currency: mysqlEnum("currency", ["NPR", "USD", "INR"]).default("NPR"),
   language: mysqlEnum("language", ["en", "ne"]).default("en"),

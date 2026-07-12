@@ -11,6 +11,29 @@ function generateCaseNumber(): string {
   return `SCR-${year}-${random}`;
 }
 
+/**
+ * Validates coordinate pair integrity: both must be present and within Nepal bounds,
+ * or both are set to null. Partial coordinate storage is not permitted.
+ */
+export function validateCoordinatePair(
+  lat: number | null | undefined,
+  lng: number | null | undefined
+): { latitude: string | null; longitude: string | null } {
+  if (lat == null || lng == null) {
+    return { latitude: null, longitude: null };
+  }
+
+  const inNepalBounds =
+    lat >= 26.3 && lat <= 30.5 &&
+    lng >= 80.0 && lng <= 88.2;
+
+  if (inNepalBounds) {
+    return { latitude: lat.toString(), longitude: lng.toString() };
+  }
+
+  return { latitude: null, longitude: null };
+}
+
 export const reportRouter = createRouter({
   create: publicQuery
     .input(z.object({
@@ -27,6 +50,8 @@ export const reportRouter = createRouter({
       district: z.string(),
       municipality: z.string(),
       location: z.string().optional(),
+      latitude: z.number().min(26.3).max(30.5).nullable().optional(),
+      longitude: z.number().min(80.0).max(88.2).nullable().optional(),
       amountLost: z.number().optional(),
       currency: z.enum(["NPR", "USD", "INR"]).default("NPR"),
       language: z.enum(["en", "ne"]).default("en"),
@@ -42,12 +67,18 @@ export const reportRouter = createRouter({
     .mutation(async ({ input, ctx }) => {
       const db = getDb();
       const caseNumber = generateCaseNumber();
-      const { identifiers: inputIdentifiers, ...reportInput } = input;
+      const { identifiers: inputIdentifiers, latitude, longitude, ...reportInput } = input;
+
+      // Coordinate pair validation: both must be present and in-bounds, or both null
+      const { latitude: validatedLatitude, longitude: validatedLongitude } = validateCoordinatePair(latitude, longitude);
+
       const reportData = {
         ...reportInput,
         caseNumber,
         reporterId: ctx.user?.id || null,
         amountLost: input.amountLost ? input.amountLost.toString() : null,
+        latitude: validatedLatitude,
+        longitude: validatedLongitude,
       };
       const [report] = await db.insert(reports).values(reportData);
       const reportId = Number(report.insertId);

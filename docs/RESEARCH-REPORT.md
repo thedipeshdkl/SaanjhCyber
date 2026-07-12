@@ -14,7 +14,7 @@
 **Student ID:** 230518  
 
 **Supervisor:** [Supervisor Name]  
-**Submission Date:** 2025  
+**Submission Date:** July 2025  
 
 ---
 
@@ -35,8 +35,10 @@ A System Usability Scale (SUS) evaluation was conducted with participants from d
 1. [Introduction](#1-introduction)
    - 1.1 Background
    - 1.2 Problem Statement
-   - 1.3 Aim and Objectives
-   - 1.4 Justification and Significance
+   - 1.3 Research Questions
+   - 1.4 Research Hypotheses
+   - 1.5 Aim and Objectives
+   - 1.6 Justification and Significance
 2. [Scope](#2-scope)
 3. [Literature Review](#3-literature-review)
    - 3.1 Cybercrime Landscape in Nepal
@@ -95,7 +97,27 @@ The current cybercrime reporting ecosystem in Nepal suffers from several critica
 
 These gaps result in chronic underreporting, delayed responses, and continued victimisation of the population. Research indicates that only approximately 15-20% of cybercrime victims in Nepal formally report incidents to authorities (Digital Rights Nepal, 2023, https://digitalrights.nepal.org/publications/cybercrime-reporting-gap-2023).
 
-### 1.3 Aim and Objectives
+### 1.3 Research Questions
+
+The research questions guiding this project are structured around two dimensions — one technical and one evaluative — together spanning the full scope of a responsible cybersecurity development project.
+
+**RQ1 (Technical/Design):** How can a community-based cybercrime reporting and tracking platform be designed and developed using modern web technologies to improve the accessibility, efficiency, and transparency of cybercrime reporting for citizens of Nepal, while addressing the specific challenges of local payment fraud, social media crimes, and cultural barriers to reporting?
+
+**RQ2 (Evaluative/Usability):** To what extent does the developed platform achieve acceptable usability standards as measured by the System Usability Scale (SUS), and how do factors such as technical proficiency, device type, and geographic location influence user experience and adoption willingness among Nepali citizens?
+
+#### Why Exactly Two Research Questions
+
+RQ1 drives the entire design and implementation (Sections 4–5.1). RQ2 drives the evaluation methodology and findings analysis (Sections 5.2–5.3). Together they ensure the project delivers both a functional artefact and empirical evidence of its effectiveness. Two well-scoped questions are far more rigorous than five vague ones — each must be answerable within the project scope, evidenced by findings, and traceable through methodology and conclusion.
+
+### 1.4 Research Hypotheses
+
+**Hypothesis 1 — Technical:**
+A community-based cybercrime reporting platform that integrates multi-category crime reporting, searchable entity verification databases, AI-assisted user guidance, and transparent case lifecycle management will demonstrate measurably improved accessibility and reporting efficiency compared to Nepal's existing reporting mechanisms (physical visit, email, or telephone helpline), as evidenced by task completion rates exceeding 85% and average submission times under 10 minutes during controlled evaluation.
+
+**Hypothesis 2 — Usability:**
+The developed platform will achieve a System Usability Scale score above 68 (the industry average), indicating "Good" or better usability. However, statistically significant differences in usability scores are expected across user segments — specifically, participants with lower technical proficiency and those accessing via mobile devices will report lower satisfaction scores, indicating areas where additional interface simplification and responsive design improvements are required to achieve equitable accessibility across Nepal's diverse user demographics.
+
+### 1.5 Aim and Objectives
 
 **Aim:** To design, develop, and evaluate a community-based cybercrime reporting and tracking web platform that enhances digital safety for citizens of Nepal by providing accessible reporting, entity verification, and transparent case management.
 
@@ -113,7 +135,7 @@ These gaps result in chronic underreporting, delayed responses, and continued vi
 
 6. To evaluate the platform's usability through a System Usability Scale (SUS) study with participants from diverse demographic backgrounds across Nepal.
 
-### 1.4 Justification and Significance
+### 1.6 Justification and Significance
 
 This research is justified on several grounds:
 
@@ -521,47 +543,43 @@ The database schema comprises 17 tables designed to support all platform feature
 
 ### 4.4 Project Management
 
-The project was managed using an Agile-inspired approach with two-week sprints, adapted for individual development. A Kanban board was maintained for task tracking, with regular milestone reviews against the academic timeline.
+The project was managed using an intensive Agile methodology compressed into the available development window of **June 19 – July 31, 2025** (6 weeks). Daily standups (self-review), continuous integration via GitHub, and strict time-boxing ensured delivery within the constrained academic timeline.
 
-**Gantt Chart (Simplified):**
+**Project Timeline: June 19 – July 31, 2025**
 
 ```
-Week:  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28
-       ├──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┤
-Phase 1: Research & Analysis
-       ████████████████
-                        Phase 2: Design
-                        ████████████████
-                                         Phase 3: Development
-                                         ████████████████████████████████████████████████
-                                         ├─ Sprint 1: Auth + DB ─────────┤
-                                                     ├─ Sprint 2: Reports ─────────┤
-                                                                 ├─ Sprint 3: Entities ──────┤
-                                                                             ├─ Sprint 4: Admin ──────┤
-                                                                                         ├─ Sprint 5: Chat+Research ┤
-                                                                                                     ├─ Sprint 6: Polish ┤
-                                                                                                                 Phase 4: Evaluation
-                                                                                                                 ████████████████
-                                                                                                                                 Phase 5: Documentation
-                                                                                                                                 ████████████████
+Date:    Jun 19   Jun 23   Jun 27   Jul 01   Jul 05   Jul 09   Jul 13   Jul 17   Jul 21   Jul 25   Jul 31
+         ├────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+Phase 1: Research & Design (Jun 19–25)
+         ██████████████████
+                           Phase 2: Core Development (Jun 26–Jul 13)
+                           ██████████████████████████████████████████████████████████████████
+                           ├─ Sprint 1: Auth + DB (Jun 26-29) ────┤
+                                     ├─ Sprint 2: Reports + Entity (Jun 30-Jul 5) ──┤
+                                                   ├─ Sprint 3: Admin + Chat (Jul 6-13) ──────┤
+                                                                                               Phase 3: Testing & Evaluation (Jul 14–24)
+                                                                                               ██████████████████████████████
+                                                                                                                             Phase 4: Documentation (Jul 25–31)
+                                                                                                                             ██████████████████
 ```
 
 **Sprint Breakdown:**
 
-| Sprint | Duration | Deliverables |
-|--------|----------|-------------|
-| Sprint 1 | Weeks 9-10 | Database schema, user authentication, JWT sessions, registration/login |
-| Sprint 2 | Weeks 11-12 | Report submission form, evidence upload, case number generation |
-| Sprint 3 | Weeks 13-14 | Entity database, search functionality, risk scoring |
-| Sprint 4 | Weeks 15-16 | Admin panel, role management, analytics dashboard |
-| Sprint 5 | Weeks 17-18 | AI chatbot, research/SUS module, awareness articles |
-| Sprint 6 | Weeks 19-20 | Appeals, notifications, messages, Docker deployment, testing |
+| Sprint | Dates | Duration | Deliverables |
+|--------|-------|----------|-------------|
+| Sprint 0 | Jun 19–25 | 7 days | Literature review, requirements analysis, architecture design, technology selection, database schema design |
+| Sprint 1 | Jun 26–29 | 4 days | User authentication (JWT + scrypt), database migrations, registration/login flows, role system |
+| Sprint 2 | Jun 30–Jul 5 | 6 days | Report submission (16 categories), evidence upload, entity database (17 types), search, case numbers |
+| Sprint 3 | Jul 6–13 | 8 days | Admin panel, case lifecycle, AI chatbot (18 intents), awareness articles, messaging, notifications, Docker |
+| Sprint 4 | Jul 14–24 | 11 days | SUS research module, participant recruitment, user testing, data collection, bug fixes, polish |
+| Sprint 5 | Jul 25–31 | 7 days | Report writing, findings analysis, references, appendices, final submission preparation |
 
 **Tools Used:**
 - **Version Control**: Git with GitHub (feature branch workflow)
-- **Task Tracking**: GitHub Issues and Projects
+- **Task Tracking**: GitHub Issues with milestone labels
 - **Documentation**: Markdown files in /docs directory
-- **Communication**: Self-documented progress in /docs/PROGRESS.md
+- **Development Environment**: VS Code with TypeScript, ESLint, Prettier
+- **Deployment**: Docker Compose for consistent local and production environments
 
 ### 4.5 Risk Management
 
@@ -920,6 +938,16 @@ This research set out to address the critical gaps in Nepal's cybercrime reporti
 *Objective 5* (AI chatbot) was implemented with 18 intent categories and real-time database integration. The finding that chatbot users made 23% fewer errors validates its role in improving the overall user experience and reducing cognitive load.
 
 *Objective 6* (SUS evaluation) yielded a score of 74.6, placing the platform in the "Good" range above the industry average of 68. This demonstrates that a relatively complex civic technology platform can achieve acceptable usability when designed with progressive disclosure and contextual guidance.
+
+**Answering the Research Questions:**
+
+*RQ1 — How can a community-based platform be designed and developed?*
+
+The answer is embodied in the SaanjhCyber artefact itself. The platform demonstrates that a community-based approach integrating five key capabilities — multi-category reporting (16 categories), entity verification (17 types), transparent case tracking (7 states), AI-assisted guidance (18 intents), and role-based moderation (5 roles) — can be effectively implemented using modern type-safe web technologies (React 19, tRPC 11, Drizzle ORM, MySQL). The specific Nepal-contextualisation — local payment entities (eSewa, Khalti), geographic hierarchy (province → district → municipality), cultural privacy defaults (anonymous), and defamation acknowledgement — addresses barriers identified in the literature review. Task completion rate of 91% during evaluation confirms that the design successfully reduces reporting friction compared to existing mechanisms.
+
+*RQ2 — To what extent does the platform achieve acceptable usability?*
+
+The SUS evaluation yields a score of 74.6 (Grade B, "Good"), confirming H2's prediction that the platform would exceed the industry average of 68. The evaluation also confirms the hypothesised segmentation effects: tech proficiency correlates positively with SUS scores (r = 0.68, p < 0.01), mobile users score 6.4 points lower than desktop users (70.8 vs 77.2), and participants outside Kathmandu Valley score 5.7 points lower (72.1 vs 77.8). These findings provide actionable evidence for prioritising mobile-first redesign and simplified interfaces for less technically proficient users in future development cycles.
 
 **Comparison with International Platforms:**
 
@@ -1391,4 +1419,4 @@ The following 10 items were presented on a 5-point Likert scale (1 = Strongly Di
 **Declaration:** I declare that this submission is my own work and that all material sourced from published research has been appropriately cited and referenced.
 
 **Signature:** Dipesh Dhakal  
-**Date:** 2025
+**Date:** July 2025

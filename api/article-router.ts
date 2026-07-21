@@ -40,7 +40,7 @@ export const articleRouter = createRouter({
       if (article) {
         // Increment view count
         await db.update(articles)
-          .set({ viewCount: sql`viewCount + 1` })
+          .set({ viewCount: sql`${articles.viewCount} + 1` })
           .where(eq(articles.id, article.id));
       }
       return article || null;

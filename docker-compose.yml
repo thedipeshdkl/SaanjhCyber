@@ -1,39 +1,97 @@
+# ══════════════════════════════════════════════════════════════════
+# SaanjhCyber — Production Docker Compose
+# ══════════════════════════════════════════════════════════════════
+# Usage:
+#   cp .env.example .env   # fill in secrets
+#   docker compose up -d   # start all services
+#   docker compose logs -f # follow logs
+# ══════════════════════════════════════════════════════════════════
+
 services:
+  # ── Application Server ─────────────────────────────────────────
   app:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: saanjhcyber-app
     environment:
       NODE_ENV: production
       PORT: 3000
-      JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: mysql://saanjh:saanjh@db:3306/saanjhcyber
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      DATABASE_URL: mysql://${MYSQL_USER:-saanjh}:${MYSQL_PASSWORD:-saanjh}@db:3306/${MYSQL_DATABASE:-saanjhcyber}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
     ports:
-      - "3000:3000"
+      - "${APP_PORT:-3000}:3000"
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
+        reservations:
+          memory: 128M
+          cpus: "0.25"
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
 
+  # ── MySQL Database ─────────────────────────────────────────────
   db:
     image: mysql:8.4
-    command: --mysql-native-password=ON
+    container_name: saanjhcyber-db
+    command:
+      - --mysql-native-password=ON
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max-connections=100
+      - --innodb-buffer-pool-size=256M
+      - --slow-query-log=ON
+      - --long-query-time=2
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: saanjhcyber
-      MYSQL_USER: saanjh
-      MYSQL_PASSWORD: saanjh
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-saanjhcyber}
+      MYSQL_USER: ${MYSQL_USER:-saanjh}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-saanjh}
     ports:
-      - "3306:3306"
+      - "${DB_PORT:-3306}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.5"
+        reservations:
+          memory: 256M
+          cpus: "0.25"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpassword"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "--password=${MYSQL_ROOT_PASSWORD:-rootpassword}"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 40s
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+networks:
+  backend:
+    driver: bridge
+    name: saanjhcyber-network
 
 volumes:
   mysql_data:
+    driver: local
+    name: saanjhcyber-mysql-data

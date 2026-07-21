@@ -9,10 +9,10 @@ import { TRPCError } from "@trpc/server";
 async function logAudit(userId: number, action: string, resource: string, resourceId?: number, details?: unknown) {
   const db = getDb();
   await db.insert(auditLogs).values({
-    userId: BigInt(userId) as any,
+    userId: userId,
     action,
     resource,
-    resourceId: resourceId ? BigInt(resourceId) as any : undefined,
+    resourceId: resourceId ? resourceId : undefined,
     details: details ? JSON.stringify(details) : undefined,
   });
 }
@@ -240,7 +240,7 @@ export const adminRouter = createRouter({
       await db.update(reports).set({
         status: input.status,
         moderationNotes: input.notes || report.moderationNotes,
-        verifiedBy: input.status === "verified" ? BigInt(ctx.user.id) as any : report.verifiedBy,
+        verifiedBy: input.status === "verified" ? ctx.user.id : report.verifiedBy,
         verifiedAt: input.status === "verified" ? new Date() : report.verifiedAt,
       }).where(eq(reports.id, input.reportId));
 

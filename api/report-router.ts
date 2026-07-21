@@ -52,7 +52,10 @@ export const reportRouter = createRouter({
       location: z.string().optional(),
       latitude: z.number().min(26.3).max(30.5).nullable().optional(),
       longitude: z.number().min(80.0).max(88.2).nullable().optional(),
-      amountLost: z.number().optional(),
+      amountLost: z.preprocess(
+        (val) => (val === null || val === undefined || Number.isNaN(val) || val === "") ? undefined : Number(val),
+        z.number().optional()
+      ),
       currency: z.enum(["NPR", "USD", "INR"]).default("NPR"),
       language: z.enum(["en", "ne"]).default("en"),
       victimType: z.enum(["individual", "business", "organization", "other"]),
@@ -102,9 +105,9 @@ export const reportRouter = createRouter({
           if (existing) {
             // Increment report count
             await db.update(entities).set({
-              reportCount: sql`reportCount + 1`,
+              reportCount: sql`${entities.reportCount} + 1`,
               lastReportedAt: new Date(),
-              relatedReports: sql`JSON_ARRAY_APPEND(COALESCE(relatedReports, JSON_ARRAY()), '$', ${reportId})`,
+              relatedReports: sql`JSON_ARRAY_APPEND(COALESCE(${entities.relatedReports}, JSON_ARRAY()), '$', ${reportId})`,
             }).where(eq(entities.id, existing.id));
           } else {
             // Create new entity
@@ -159,7 +162,7 @@ export const reportRouter = createRouter({
 
       // Update evidence count
       await db.update(reports)
-        .set({ evidenceCount: sql`evidenceCount + ${input.files.length}` })
+        .set({ evidenceCount: sql`${reports.evidenceCount} + ${input.files.length}` })
         .where(eq(reports.id, input.reportId));
 
       return { success: true, count: input.files.length };

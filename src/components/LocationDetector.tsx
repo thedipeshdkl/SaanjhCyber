@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { MapPin, Navigation, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { trpc } from "@/providers/trpc";
 import ConfirmationCard from "./ConfirmationCard";
+import LocationMap from "./LocationMap";
 
 export interface DetectedLocation {
   latitude: number;
@@ -185,45 +186,32 @@ export default function LocationDetector({
       {/* Detect Mode Content */}
       {currentMode === "detect" && (
         <div className="space-y-4">
-          {/* No location detected yet and not loading — show detect button */}
-          {!detectedLocation && !isDetecting && !coordinates && (
-            <div className="text-center py-6">
-              <button
-                type="button"
-                onClick={handleDetectLocation}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--prayer-crimson)] text-white rounded-lg font-medium hover:bg-[var(--prayer-crimson)]/90 transition-colors"
-              >
-                <Navigation className="w-5 h-5" />
-                Detect My Location
-              </button>
-              <p className="text-sm text-[var(--thamel-gray)]/60 mt-3">
-                We&apos;ll use your device&apos;s GPS to find your location
-              </p>
-            </div>
-          )}
+          {/* Always show the interactive map */}
+          <LocationMap
+            latitude={coordinates?.latitude ?? null}
+            longitude={coordinates?.longitude ?? null}
+            onLocationSelect={(lat, lng) => {
+              setError(null);
+              setCoordinates({ latitude: lat, longitude: lng });
+              setIsDetecting(true);
+            }}
+            onDetectCurrentLocation={handleDetectLocation}
+            isDetecting={isDetecting}
+          />
 
           {/* Loading state */}
           {isDetecting && (
-            <div className="flex flex-col items-center py-6 space-y-3">
-              <Loader2 className="w-8 h-8 text-[var(--prayer-crimson)] animate-spin" />
+            <div className="flex flex-col items-center py-4 space-y-2">
+              <Loader2 className="w-6 h-6 text-[var(--prayer-crimson)] animate-spin" />
               <p className="text-sm font-medium text-[var(--thamel-gray)]">
                 Detecting your location...
               </p>
-              {/* Show coordinates while reverse geocoding is in progress */}
               {coordinates && (
                 <p className="text-xs text-[var(--thamel-gray)]/60">
                   Coordinates: {coordinates.latitude.toFixed(4)},{" "}
                   {coordinates.longitude.toFixed(4)}
                 </p>
               )}
-              <button
-                type="button"
-                disabled
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-300 text-gray-500 rounded-lg font-medium cursor-not-allowed"
-              >
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Detecting...
-              </button>
             </div>
           )}
 

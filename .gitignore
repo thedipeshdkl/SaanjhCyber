@@ -39,3 +39,10 @@ build/
 # Test coverage
 coverage/
 .nyc_output/
+
+# AI tools (Kiro, Copilot, Cursor, etc.)
+.kiro/
+.cursor/
+.copilot/
+.codeium/
+.ai/

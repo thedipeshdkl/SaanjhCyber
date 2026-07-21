@@ -83,7 +83,7 @@ export const reports = mysqlTable("reports", {
 export const evidence = mysqlTable("evidence", {
   id: serial("id").primaryKey(),
   reportId: bigint("reportId", { mode: "number", unsigned: true }).notNull().references(() => reports.id, { onDelete: "cascade" }),
-  fileUrl: varchar("fileUrl", { length: 500 }).notNull(),
+  fileUrl: text("fileUrl").notNull(),
   fileType: mysqlEnum("fileType", ["image", "pdf", "video", "audio", "document", "screenshot", "chat_export"]).notNull(),
   fileName: varchar("fileName", { length: 255 }).notNull(),
   fileSize: bigint("fileSize", { mode: "number", unsigned: true }).notNull(),

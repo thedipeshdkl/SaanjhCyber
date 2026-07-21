@@ -237,8 +237,13 @@ export default function Report() {
   };
 
   const onSubmit = (data: ReportFormData) => {
+    const amountLost = typeof data.amountLost === "number" && !isNaN(data.amountLost)
+      ? data.amountLost
+      : undefined;
+
     createReport.mutate({
       ...data,
+      amountLost,
       identifiers,
       latitude: data.latitude ?? null,
       longitude: data.longitude ?? null,

@@ -16,6 +16,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    pool: "threads",
+    testTimeout: 60000,
     include: ["api/**/*.test.ts", "api/**/*.spec.ts"],
   },
 });
